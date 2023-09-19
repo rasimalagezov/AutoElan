@@ -1,0 +1,37 @@
+﻿@model ModelDto
+
+<form asp-action="ModelDelete">
+    <br />
+    <div class="container col-9 border p-3">
+        <h1 class="text-white text-center">Delete Model</h1>
+        <input asp-for="Id" hidden />
+        <hr />
+        <div class="row">
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Model Name</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="Name" disabled class="form-control" />
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Brand Name</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="BrandId" disabled class="form-select" asp-items="@ViewBag.Brands">
+                    <option disabled selected> --- Select Brand --- </option>
+                </select>
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-4 offset-1">
+                <a class="btn-primary btn form-control " asp-action="ModelIndex">Back to List</a>
+            </div>
+            <div class="col-4">
+                <input type="submit" value="Delete" class="btn btn-danger form-control" />
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</form>

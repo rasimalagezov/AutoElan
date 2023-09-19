@@ -1,0 +1,149 @@
+﻿@model VehicleDto
+
+<form asp-action="VehicleEdit">
+    <br />
+    <div class="container col-9 border p-3">
+        <h1 class="text-white text-center">Update Vehicle</h1>
+        <input hidden asp-for="Id" />
+        <hr />
+        <div class="row">
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Brand Name</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="BrandId" class="form-select" id="brandId" asp-items="@ViewBag.Brands">
+                    <option disabled selected> --- Select Brand --- </option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+
+             <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Model Name</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="ModelId" class="form-select" id="modelId" asp-items="@ViewBag.Models">
+                     <option disabled selected> --- Select Model --- </option>
+                </select>
+                <span asp-validation-for="ModelId" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Production Year</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="ProductionYear" class="form-control" type="number" />
+                <span asp-validation-for="ProductionYear" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Mileage</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="Mileage" class="form-control" type="number" />
+                <span asp-validation-for="Mileage" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Price</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="Price" class="form-control" type="number" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Color</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="ColorId" class="form-select" asp-items="@ViewBag.Colors">
+                    <option disabled selected> --- Select Color --- </option>
+                </select>
+                <span asp-validation-for="ColorId" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Vehicle Type</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="VehicleTypeId" class="form-select" asp-items="@ViewBag.VehicleTypes">
+                    <option disabled selected> --- Select Vehicle Type --- </option>
+                </select>
+                <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Fuel Type</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="FuelTypeId" class="form-select" asp-items="@ViewBag.FuelTypes">
+                    <option disabled selected> --- Select Fuel Type --- </option>
+                </select>
+                <span asp-validation-for="FuelTypeId" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Gearbox</label>
+            </div>
+            <div class="col-8 pb-3">
+                <select asp-for="GearboxId" class="form-select" asp-items="@ViewBag.Gearboxes">
+                    <option disabled selected> --- Select Gearbox --- </option>
+                </select>
+                <span asp-validation-for="GearboxId" class="text-danger"></span>
+            </div>
+
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Photo</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="Image" class="form-control" />
+                <input asp-for="PhotoUrl" hidden class="form-control" />
+                <input asp-for="ImageLocalPath" hidden class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-4 offset-1">
+                <a class="btn-primary btn form-control" asp-action="VehicleIndex">Back to List</a>
+            </div>
+            <div class="col-4">
+                <input type="submit" value="Update" class="btn btn-success form-control" />
+            </div>
+        </div>
+        <div>
+            <div class="col-2">
+                <img src="@Model.PhotoUrl" class="w-100" alt="" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            getModelsByBrandId();
+        })
+        $("#brandId").change(function () {
+            getModelsByBrandId();
+        });
+        var getModelsByBrandId = function () {
+            $.ajax({
+                url:'@Url.Action("GetModelsByBrandId", "Vehicle")',
+                type:'GET',
+                data: {
+                    brandId: $('#brandId').val(),
+                },
+                success: function (data) {
+                    $('#modelId').find('option').remove()
+                    $(data).each(
+                        function (index, item) {
+                            $('#modelId').append('<option value="' + item.id + '">' + item.name + '</option>')
+                        }
+                    );
+                }
+            })
+        }
+    </script>
+    
+    <partial name="_ValidationScriptsPartial" />
+                }
+

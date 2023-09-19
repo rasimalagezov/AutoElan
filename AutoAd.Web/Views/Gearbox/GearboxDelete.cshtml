@@ -1,0 +1,28 @@
+﻿@model GearboxDto
+
+<form asp-action="GearboxDelete">
+    <br />
+    <div class="container col-9 border p-3">
+        <h1 class="text-white text-center">Delete Gearbox</h1>
+        <input asp-for="Id" hidden />
+        <hr />
+        <div class="row">
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Gearbox Name</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="Name" disabled class="form-control" />
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-4 offset-1">
+                <a class="btn-primary btn form-control " asp-action="GearboxIndex">Back to List</a>
+            </div>
+            <div class="col-4">
+                <input type="submit" value="Delete" class="btn btn-danger form-control" />
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</form>

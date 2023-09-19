@@ -1,0 +1,33 @@
+﻿@model FuelTypeDto
+
+<form asp-action="FuelTypeEdit">
+    <br />
+    <div class="container col-9 border p-3">
+        <h1 class="text-white text-center">Update Fuel Type</h1>
+        <input hidden asp-for="Id" />
+        <hr />
+        <div class="row">
+            <div class="col-4 text-end">
+                <label class="control-label pt-2" style="font-size:20px;">Fuel Type Name</label>
+            </div>
+            <div class="col-8 pb-3">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-4 offset-1">
+                <a class="btn-primary btn form-control" asp-action="FuelTypeIndex">Back to List</a>
+            </div>
+            <div class="col-4">
+                <input type="submit" value="Update" class="btn btn-success form-control" />
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+                }
