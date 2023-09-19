@@ -1,5 +1,6 @@
 ﻿using AutoAd.Domain.Entities;
 using AutoAd.Domain.Entities.Identity;
+using AutoAd.Persistence.Extensions.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ namespace AutoAd.Persistence.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Seed();
 
             modelBuilder.Entity<Vehicle>(a =>
             {

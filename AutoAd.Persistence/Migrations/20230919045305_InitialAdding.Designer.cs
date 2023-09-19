@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoAd.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230916054844_AddingIdentityTables")]
-    partial class AddingIdentityTables
+    [Migration("20230919045305_InitialAdding")]
+    partial class InitialAdding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,33 @@ namespace AutoAd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Brands");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "BMW"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Mercedes"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Audi"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Toyota"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Hyundai"
+                        });
                 });
 
             modelBuilder.Entity("AutoAd.Domain.Entities.Color", b =>
@@ -57,6 +84,33 @@ namespace AutoAd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Colors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Red"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "White"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Blue"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Black"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Green"
+                        });
                 });
 
             modelBuilder.Entity("AutoAd.Domain.Entities.FuelType", b =>
@@ -74,6 +128,28 @@ namespace AutoAd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FuelTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Benzin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Dizel"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Hibrit"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Elektrik"
+                        });
                 });
 
             modelBuilder.Entity("AutoAd.Domain.Entities.Gearbox", b =>
@@ -91,6 +167,92 @@ namespace AutoAd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Gearboxes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Avtomat"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Mexanika"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Tiptronic"
+                        });
+                });
+
+            modelBuilder.Entity("AutoAd.Domain.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("AutoAd.Domain.Entities.Model", b =>
@@ -113,6 +275,74 @@ namespace AutoAd.Persistence.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("Models");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BrandId = 1,
+                            Name = "X5"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BrandId = 1,
+                            Name = "325"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BrandId = 2,
+                            Name = "E220"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BrandId = 2,
+                            Name = "S300"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BrandId = 2,
+                            Name = "C230"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BrandId = 3,
+                            Name = "Q5"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            BrandId = 3,
+                            Name = "Q7"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            BrandId = 4,
+                            Name = "Land Cruiser"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            BrandId = 4,
+                            Name = "Prius"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            BrandId = 5,
+                            Name = "Sonata"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            BrandId = 5,
+                            Name = "Accent"
+                        });
                 });
 
             modelBuilder.Entity("AutoAd.Domain.Entities.Vehicle", b =>
@@ -135,6 +365,9 @@ namespace AutoAd.Persistence.Migrations
                     b.Property<int>("GearboxId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImageLocalPath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Mileage")
                         .HasColumnType("int");
 
@@ -142,7 +375,6 @@ namespace AutoAd.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PhotoUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Price")
@@ -186,6 +418,23 @@ namespace AutoAd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("VehicleTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Sedan"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Ofroader"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Bus"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -238,71 +487,6 @@ namespace AutoAd.Persistence.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -459,7 +643,7 @@ namespace AutoAd.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AutoAd.Domain.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -468,7 +652,7 @@ namespace AutoAd.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AutoAd.Domain.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -483,7 +667,7 @@ namespace AutoAd.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AutoAd.Domain.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -492,7 +676,7 @@ namespace AutoAd.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AutoAd.Domain.Entities.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

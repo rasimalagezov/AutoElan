@@ -11,6 +11,7 @@ namespace AutoAd.API.Controllers
 {
     [Route("api/model")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class ModelAPIController : ControllerBase
     {
         private readonly IModelReadRepository _modelReadRepository;
@@ -31,7 +32,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<Model> objList = _modelReadRepository.GetAll().Include(m => m.Brand);
+                IEnumerable<Model> objList = _modelReadRepository.GetAll(false).Include(m => m.Brand);
 
                 _response.Result = _mapper.Map<IEnumerable<ModelDto>>(objList);
             }

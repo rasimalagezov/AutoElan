@@ -31,7 +31,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<Gearbox> objList = _gearboxReadRepository.GetAll();
+                IEnumerable<Gearbox> objList = _gearboxReadRepository.GetAll(false);
 
                 _response.Result = _mapper.Map<IEnumerable<GearboxDto>>(objList);
             }

@@ -33,7 +33,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<Vehicle> objList = _vehicleReadRepository.GetAll()
+                IEnumerable<Vehicle> objList = _vehicleReadRepository.GetAll(false)
                 .Include(b => b.Brand)
                 .Include(m => m.Model)
                 .Include(c => c.Color)

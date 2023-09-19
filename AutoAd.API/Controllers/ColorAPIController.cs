@@ -31,7 +31,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<Color> objList = _colorReadRepository.GetAll();
+                IEnumerable<Color> objList = _colorReadRepository.GetAll(false);
 
                 _response.Result = _mapper.Map<IEnumerable<ColorDto>>(objList);
             }

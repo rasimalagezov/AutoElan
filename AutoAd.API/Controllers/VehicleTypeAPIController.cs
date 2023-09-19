@@ -31,7 +31,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<VehicleType> objList = _vehicleTypeReadRepository.GetAll();
+                IEnumerable<VehicleType> objList = _vehicleTypeReadRepository.GetAll(false);
 
                 _response.Result = _mapper.Map<IEnumerable<VehicleTypeDto>>(objList);
             }

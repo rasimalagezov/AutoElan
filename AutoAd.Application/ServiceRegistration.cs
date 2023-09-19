@@ -10,9 +10,9 @@ namespace AutoAd.Application
 {
     public static class ServiceRegistration
     {
-        public static void AddApplicationServices(this IServiceCollection services)
+        public static void AddApplicationServices(this IServiceCollection collection)
         {
-            
+            collection.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceRegistration).Assembly));
         }
     }
 }

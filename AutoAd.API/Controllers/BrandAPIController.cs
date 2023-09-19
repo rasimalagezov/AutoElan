@@ -9,6 +9,7 @@ namespace AutoAd.API.Controllers
 {
     [Route("api/brand")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class BrandAPIController : ControllerBase
     {
         private readonly IBrandReadRepository _brandReadRepository;
@@ -29,7 +30,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<Brand> objList =  _brandReadRepository.GetAll();
+                IEnumerable<Brand> objList = _brandReadRepository.GetAll(false);
 
                 _response.Result = _mapper.Map<IEnumerable<BrandDto>>(objList);
             }

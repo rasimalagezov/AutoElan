@@ -10,6 +10,7 @@ namespace AutoAd.API.Controllers
 {
     [Route("api/fuelType")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class FuelTypeAPIController : ControllerBase
     {
         private readonly IFuelTypeReadRepository _fuelTypeReadRepository;
@@ -30,7 +31,7 @@ namespace AutoAd.API.Controllers
         {
             try
             {
-                IEnumerable<FuelType> objList = _fuelTypeReadRepository.GetAll();
+                IEnumerable<FuelType> objList = _fuelTypeReadRepository.GetAll(false);
 
                 _response.Result = _mapper.Map<IEnumerable<FuelTypeDto>>(objList);
             }
