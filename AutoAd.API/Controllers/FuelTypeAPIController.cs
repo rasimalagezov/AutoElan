@@ -1,118 +1,61 @@
-﻿using AutoAd.Application.DTO;
-using AutoAd.Application.Repositories.FuelTypeRepository;
-using AutoAd.Domain.Entities;
-using AutoMapper;
+﻿using AutoAd.Persistence.Features.Commands.FuelTypes.Create;
+using AutoAd.Persistence.Features.Commands.FuelTypes.Delete;
+using AutoAd.Persistence.Features.Commands.FuelTypes.Update;
+using AutoAd.Persistence.Features.Queries.FuelTypes.GetFuelTypeById;
+using AutoAd.Persistence.Features.Queries.FuelTypes.GetFuelTypes;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoAd.API.Controllers
 {
     [Route("api/fuelType")]
-    [ApiController]
     [Authorize(Roles = "ADMIN")]
+    [ApiController]
     public class FuelTypeAPIController : ControllerBase
     {
-        private readonly IFuelTypeReadRepository _fuelTypeReadRepository;
-        private readonly IFuelTypeWriteRepository _fuelTypeWriteRepository;
-        private readonly IMapper _mapper;
-        private ResponseDto _response;
+        private readonly IMediator _mediator;
 
-        public FuelTypeAPIController(IFuelTypeReadRepository fuelTypeReadRepository, IFuelTypeWriteRepository fuelTypeWriteRepository, IMapper mapper)
+        public FuelTypeAPIController(IMediator mediator)
         {
-            _fuelTypeReadRepository = fuelTypeReadRepository;
-            _fuelTypeWriteRepository = fuelTypeWriteRepository;
-            _mapper = mapper;
-            _response = new ResponseDto();
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<IActionResult> Get([FromQuery] GetFuelTypesQueryRequest getFuelTypesQueryRequest)
         {
-            try
-            {
-                IEnumerable<FuelType> objList = _fuelTypeReadRepository.GetAll(false);
-
-                _response.Result = _mapper.Map<IEnumerable<FuelTypeDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetFuelTypesQueryResponse response = await _mediator.Send(getFuelTypesQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Get(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetFuelTypeByIdQueryRequest getFuelTypeByIdQueryRequest)
         {
-            try
-            {
-                FuelType obj = await _fuelTypeReadRepository.GetByIdAsync(id);
-                _response.Result = _mapper.Map<FuelTypeDto>(obj);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetFuelTypeByIdQueryResponse response = await _mediator.Send(getFuelTypeByIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ResponseDto> Create([FromBody] FuelTypeDto fuelTypeDto)
+        public async Task<IActionResult> Create(CreateFuelTypeCommandRequest createFuelTypeCommandRequest)
         {
-            try
-            {
-                FuelType fuelType = _mapper.Map<FuelType>(fuelTypeDto);
-                await _fuelTypeWriteRepository.AddAsync(fuelType);
-                await _fuelTypeWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<FuelTypeDto>(fuelType);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            CreateFuelTypeCommandResponse response = await _mediator.Send(createFuelTypeCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<ResponseDto> Edit([FromBody] FuelTypeDto fuelTypeDto)
+        public async Task<IActionResult> Edit([FromBody] UpdateFuelTypeCommandRequest updateFuelTypeCommandRequest)
         {
-            try
-            {
-                FuelType fuelType = _mapper.Map<FuelType>(fuelTypeDto);
-                _fuelTypeWriteRepository.Update(fuelType);
-                await _fuelTypeWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<FuelTypeDto>(fuelType);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            UpdateFuelTypeCommandResponse response = await _mediator.Send(updateFuelTypeCommandRequest);
+            return Ok(response);
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Delete(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteFuelTypeCommandRequest deleteFuelTypeCommandRequest)
         {
-            try
-            {
-                await _fuelTypeWriteRepository.RemoveAsync(id);
-                await _fuelTypeWriteRepository.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            DeleteFuelTypeCommandResponse response = await _mediator.Send(deleteFuelTypeCommandRequest);
+            return Ok(response);
         }
     }
 }

@@ -3,6 +3,7 @@ using AutoAd.Domain.Entities.Common;
 using AutoAd.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace AutoAd.Persistence.Repositories
 {

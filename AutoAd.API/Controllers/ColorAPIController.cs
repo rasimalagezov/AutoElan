@@ -1,118 +1,61 @@
-﻿using AutoAd.Application.DTO;
-using AutoAd.Application.Repositories.ColorRepository;
-using AutoAd.Domain.Entities;
-using AutoMapper;
+﻿using AutoAd.Persistence.Features.Commands.Colors.Create;
+using AutoAd.Persistence.Features.Commands.Colors.Delete;
+using AutoAd.Persistence.Features.Commands.Colors.Update;
+using AutoAd.Persistence.Features.Queries.Colors.GetColorById;
+using AutoAd.Persistence.Features.Queries.Colors.GetColors;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoAd.API.Controllers
 {
     [Route("api/color")]
-    [ApiController]
     [Authorize(Roles = "ADMIN")]
+    [ApiController]
     public class ColorAPIController : ControllerBase
     {
-        private readonly IColorReadRepository _colorReadRepository;
-        private readonly IColorWriteRepository _colorWriteRepository;
-        private readonly IMapper _mapper;
-        private ResponseDto _response;
+        private readonly IMediator _mediator;
 
-        public ColorAPIController(IColorReadRepository colorReadRepository, IColorWriteRepository colorWriteRepository, IMapper mapper)
+        public ColorAPIController(IMediator mediator)
         {
-            _colorReadRepository = colorReadRepository;
-            _colorWriteRepository = colorWriteRepository;
-            _mapper = mapper;
-            _response = new ResponseDto();
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<IActionResult> Get([FromQuery] GetColorsQueryRequest getColorsQueryRequest)
         {
-            try
-            {
-                IEnumerable<Color> objList = _colorReadRepository.GetAll(false);
-
-                _response.Result = _mapper.Map<IEnumerable<ColorDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetColorsQueryResponse response = await _mediator.Send(getColorsQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Get(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetColorByIdQueryRequest getColorByIdQueryRequest)
         {
-            try
-            {
-                Color obj = await _colorReadRepository.GetByIdAsync(id);
-                _response.Result = _mapper.Map<ColorDto>(obj);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetColorByIdQueryResponse response = await _mediator.Send(getColorByIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ResponseDto> Create([FromBody] ColorDto colorDto)
+        public async Task<IActionResult> Create(CreateColorCommandRequest createColorCommandRequest)
         {
-            try
-            {
-                Color color = _mapper.Map<Color>(colorDto);
-                await _colorWriteRepository.AddAsync(color);
-                await _colorWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<ColorDto>(color);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            CreateColorCommandResponse response = await _mediator.Send(createColorCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<ResponseDto> Edit([FromBody] ColorDto colorDto)
+        public async Task<IActionResult> Edit([FromBody] UpdateColorCommandRequest updateColorCommandRequest)
         {
-            try
-            {
-                Color color = _mapper.Map<Color>(colorDto);
-                _colorWriteRepository.Update(color);
-                await _colorWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<ColorDto>(color);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            UpdateColorCommandResponse response = await _mediator.Send(updateColorCommandRequest);
+            return Ok(response);
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Delete(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteColorCommandRequest deleteColorCommandRequest)
         {
-            try
-            {
-                await _colorWriteRepository.RemoveAsync(id);
-                await _colorWriteRepository.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            DeleteColorCommandResponse response = await _mediator.Send(deleteColorCommandRequest);
+            return Ok(response);
         }
     }
 }

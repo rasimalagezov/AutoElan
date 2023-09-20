@@ -1,118 +1,61 @@
-﻿using AutoAd.Application.DTO;
-using AutoAd.Application.Repositories.VehicleTypeRepository;
-using AutoAd.Domain.Entities;
-using AutoMapper;
+﻿using AutoAd.Persistence.Features.Commands.VehicleTypes.Create;
+using AutoAd.Persistence.Features.Commands.VehicleTypes.Delete;
+using AutoAd.Persistence.Features.Commands.VehicleTypes.Update;
+using AutoAd.Persistence.Features.Queries.VehicleTypes.GetVehicleTypeById;
+using AutoAd.Persistence.Features.Queries.VehicleTypes.GetVehicleTypes;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoAd.API.Controllers
 {
     [Route("api/vehicleType")]
-    [ApiController]
     [Authorize(Roles = "ADMIN")]
+    [ApiController]
     public class VehicleTypeAPIController : ControllerBase
     {
-        private readonly IVehicleTypeReadRepository _vehicleTypeReadRepository;
-        private readonly IVehicleTypeWriteRepository _vehicleTypeWriteRepository;
-        private readonly IMapper _mapper;
-        private ResponseDto _response;
+        private readonly IMediator _mediator;
 
-        public VehicleTypeAPIController(IVehicleTypeReadRepository vehicleTypeReadRepository, IVehicleTypeWriteRepository vehicleTypeWriteRepository, IMapper mapper)
+        public VehicleTypeAPIController(IMediator mediator)
         {
-            _vehicleTypeReadRepository = vehicleTypeReadRepository;
-            _vehicleTypeWriteRepository = vehicleTypeWriteRepository;
-            _mapper = mapper;
-            _response = new ResponseDto();
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<IActionResult> Get([FromQuery] GetVehicleTypesQueryRequest getVehicleTypesQueryRequest)
         {
-            try
-            {
-                IEnumerable<VehicleType> objList = _vehicleTypeReadRepository.GetAll(false);
-
-                _response.Result = _mapper.Map<IEnumerable<VehicleTypeDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetVehicleTypesQueryResponse response = await _mediator.Send(getVehicleTypesQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Get(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetVehicleTypeByIdQueryRequest getVehicleTypeByIdQueryRequest)
         {
-            try
-            {
-                VehicleType obj = await _vehicleTypeReadRepository.GetByIdAsync(id);
-                _response.Result = _mapper.Map<VehicleTypeDto>(obj);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetVehicleTypeByIdQueryResponse response = await _mediator.Send(getVehicleTypeByIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ResponseDto> Create([FromBody] VehicleTypeDto vehicleTypeDto)
+        public async Task<IActionResult> Create(CreateVehicleTypeCommandRequest createVehicleTypeCommandRequest)
         {
-            try
-            {
-                VehicleType vehicleType = _mapper.Map<VehicleType>(vehicleTypeDto);
-                await _vehicleTypeWriteRepository.AddAsync(vehicleType);
-                await _vehicleTypeWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<VehicleTypeDto>(vehicleType);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            CreateVehicleTypeCommandResponse response = await _mediator.Send(createVehicleTypeCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<ResponseDto> Edit([FromBody] VehicleTypeDto vehicleTypeDto)
+        public async Task<IActionResult> Edit([FromBody] UpdateVehicleTypeCommandRequest updateVehicleTypeCommandRequest)
         {
-            try
-            {
-                VehicleType vehicleType = _mapper.Map<VehicleType>(vehicleTypeDto);
-                _vehicleTypeWriteRepository.Update(vehicleType);
-                await _vehicleTypeWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<VehicleTypeDto>(vehicleType);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            UpdateVehicleTypeCommandResponse response = await _mediator.Send(updateVehicleTypeCommandRequest);
+            return Ok(response);
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Delete(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteVehicleTypeCommandRequest deleteVehicleTypeCommandRequest)
         {
-            try
-            {
-                await _vehicleTypeWriteRepository.RemoveAsync(id);
-                await _vehicleTypeWriteRepository.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            DeleteVehicleTypeCommandResponse response = await _mediator.Send(deleteVehicleTypeCommandRequest);
+            return Ok(response);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace AutoAd.Application
     {
         public static void AddApplicationServices(this IServiceCollection collection)
         {
-            collection.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceRegistration).Assembly));
+            
         }
     }
 }

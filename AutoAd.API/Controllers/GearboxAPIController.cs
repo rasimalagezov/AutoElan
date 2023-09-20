@@ -1,118 +1,61 @@
-﻿using AutoAd.Application.DTO;
-using AutoAd.Application.Repositories.GearboxRepository;
-using AutoAd.Domain.Entities;
-using AutoMapper;
+﻿using AutoAd.Persistence.Features.Commands.Gearboxes.Create;
+using AutoAd.Persistence.Features.Commands.Gearboxes.Delete;
+using AutoAd.Persistence.Features.Commands.Gearboxes.Update;
+using AutoAd.Persistence.Features.Queries.Gearboxes.GetGearboxById;
+using AutoAd.Persistence.Features.Queries.Gearboxes.GetGearboxes;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoAd.API.Controllers
 {
     [Route("api/gearbox")]
-    [ApiController]
     [Authorize(Roles = "ADMIN")]
+    [ApiController]
     public class GearboxAPIController : ControllerBase
     {
-        private readonly IGearboxReadRepository _gearboxReadRepository;
-        private readonly IGearboxWriteRepository _gearboxWriteRepository;
-        private readonly IMapper _mapper;
-        private ResponseDto _response;
+        private readonly IMediator _mediator;
 
-        public GearboxAPIController(IGearboxReadRepository gearboxReadRepository, IGearboxWriteRepository gearboxWriteRepository, IMapper mapper)
+        public GearboxAPIController(IMediator mediator)
         {
-            _gearboxReadRepository = gearboxReadRepository;
-            _gearboxWriteRepository = gearboxWriteRepository;
-            _mapper = mapper;
-            _response = new ResponseDto();
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<IActionResult> Get([FromQuery] GetGearboxesQueryRequest getGearboxesQueryRequest)
         {
-            try
-            {
-                IEnumerable<Gearbox> objList = _gearboxReadRepository.GetAll(false);
-
-                _response.Result = _mapper.Map<IEnumerable<GearboxDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetGearboxesQueryResponse response = await _mediator.Send(getGearboxesQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task <ResponseDto> Get(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetGearboxByIdQueryRequest getGearboxByIdQueryRequest)
         {
-            try
-            {
-                Gearbox obj = await _gearboxReadRepository.GetByIdAsync(id);
-                _response.Result = _mapper.Map<GearboxDto>(obj);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetGearboxByIdQueryResponse response = await _mediator.Send(getGearboxByIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ResponseDto> Create([FromBody] GearboxDto gearboxDto)
+        public async Task<IActionResult> Create(CreateGearboxCommandRequest createGearboxCommandRequest)
         {
-            try
-            {
-                Gearbox gearbox = _mapper.Map<Gearbox>(gearboxDto);
-                await _gearboxWriteRepository.AddAsync(gearbox);
-                await _gearboxWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<GearboxDto>(gearbox);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            CreateGearboxCommandResponse response = await _mediator.Send(createGearboxCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<ResponseDto> Edit([FromBody] GearboxDto gearboxDto)
+        public async Task<IActionResult> Edit([FromBody] UpdateGearboxCommandRequest updateGearboxCommandRequest)
         {
-            try
-            {
-                Gearbox gearbox = _mapper.Map<Gearbox>(gearboxDto);
-                _gearboxWriteRepository.Update(gearbox);
-                await _gearboxWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<GearboxDto>(gearbox);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            UpdateGearboxCommandResponse response = await _mediator.Send(updateGearboxCommandRequest);
+            return Ok(response);
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Delete(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteGearboxCommandRequest deleteGearboxCommandRequest)
         {
-            try
-            {
-                await _gearboxWriteRepository.RemoveAsync(id);
-                await _gearboxWriteRepository.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            DeleteGearboxCommandResponse response = await _mediator.Send(deleteGearboxCommandRequest);
+            return Ok(response);
         }
     }
 }

@@ -1,137 +1,71 @@
-﻿using AutoAd.Application.DTO;
-using AutoAd.Application.Repositories.ModelRepository;
-using AutoAd.Domain.Entities;
-using AutoMapper;
+﻿using AutoAd.Persistence.Features.Commands.Models.Create;
+using AutoAd.Persistence.Features.Commands.Models.Delete;
+using AutoAd.Persistence.Features.Commands.Models.Update;
+using AutoAd.Persistence.Features.Queries.Models.GetByBrandId;
+using AutoAd.Persistence.Features.Queries.Models.GetModelById;
+using AutoAd.Persistence.Features.Queries.Models.GetModels;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AutoAd.API.Controllers
 {
     [Route("api/model")]
-    [ApiController]
     [Authorize(Roles = "ADMIN")]
+    [ApiController]
     public class ModelAPIController : ControllerBase
     {
-        private readonly IModelReadRepository _modelReadRepository;
-        private readonly IModelWriteRepository _modelWriteRepository;
-        private readonly IMapper _mapper;
-        private ResponseDto _response;
+       
+        IMediator _mediator;
 
-        public ModelAPIController(IModelReadRepository modelReadRepository, IModelWriteRepository modelWriteRepository, IMapper mapper)
+        public ModelAPIController(IMediator mediator)
         {
-            _modelReadRepository = modelReadRepository;
-            _modelWriteRepository = modelWriteRepository;
-            _mapper = mapper;
-            _response = new ResponseDto();
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<IActionResult> Get([FromQuery]GetModelsQueryRequest getModelsQueryRequest)
         {
-            try
-            {
-                IEnumerable<Model> objList = _modelReadRepository.GetAll(false).Include(m => m.Brand);
-
-                _response.Result = _mapper.Map<IEnumerable<ModelDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetModelsQueryResponse response = await _mediator.Send(getModelsQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Get(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetModelByIdQueryRequest getModelByIdQueryRequest)
         {
-            try
-            {
-                Model obj = await _modelReadRepository.GetWhere(i => i.Id == id).Include(m => m.Brand).FirstOrDefaultAsync();
-                _response.Result = _mapper.Map<ModelDto>(obj);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetModelByIdQueryResponse response = await _mediator.Send(getModelByIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("brandId/{id:int}")]
-        public ResponseDto GetByBrandId(int id)
+        [Route("brandId/{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetByBrandIdQueryRequest getByBrandIdQueryRequest)
         {
-            try
-            {
-                IEnumerable<Model> objList = _modelReadRepository.GetWhere(m => m.BrandId == id).Include(m => m.Brand);
-
-                _response.Result = _mapper.Map<IEnumerable<ModelDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetByBrandIdQueryResponse response = await _mediator.Send(getByBrandIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ResponseDto> Create([FromBody] ModelDto modelDto)
+        public async Task<IActionResult> Create(CreateModelCommandRequest createModelCommandRequest)
         {
-            try
-            {
-                Model model = _mapper.Map<Model>(modelDto);
-                await _modelWriteRepository.AddAsync(model);
-                await _modelWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<ModelDto>(model);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            CreateModelCommandResponse response = await _mediator.Send(createModelCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<ResponseDto> Edit([FromBody] ModelDto modelDto)
+        public async Task<IActionResult> Edit([FromBody] UpdateModelCommandRequest updateModelCommandRequest)
         {
-            try
-            {
-                Model model = _mapper.Map<Model>(modelDto);
-                _modelWriteRepository.Update(model);
-                await _modelWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<ModelDto>(model);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            UpdateModelCommandResponse response = await _mediator.Send(updateModelCommandRequest);
+            return Ok(response);
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Delete(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteModelCommandRequest deleteModelCommandRequest)
         {
-            try
-            {
-                await _modelWriteRepository.RemoveAsync(id);
-                await _modelWriteRepository.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            DeleteModelCommandResponse response = await _mediator.Send(deleteModelCommandRequest);
+            return Ok(response);
         }
     }
 }

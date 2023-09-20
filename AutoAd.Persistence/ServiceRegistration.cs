@@ -15,14 +15,8 @@ using AutoAd.Persistence.Repositories.ModelRepository;
 using AutoAd.Persistence.Repositories.VehicleRepository;
 using AutoAd.Persistence.Repositories.VehicleTypeRepository;
 using AutoAd.Persistence.Service;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoAd.Persistence
 {
@@ -31,6 +25,8 @@ namespace AutoAd.Persistence
         public static void AddPersistenceServices(this IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(option => option.UseSqlServer(Configuration.ConnectionString));
+
+            services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(ServiceRegistration).Assembly));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

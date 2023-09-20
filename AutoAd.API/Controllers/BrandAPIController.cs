@@ -1,118 +1,61 @@
-﻿using AutoAd.Application.DTO;
-using AutoAd.Application.Repositories.BrandRepository;
-using AutoAd.Domain.Entities;
-using AutoMapper;
+﻿using AutoAd.Persistence.Features.Commands.Brands.Create;
+using AutoAd.Persistence.Features.Commands.Brands.Delete;
+using AutoAd.Persistence.Features.Commands.Brands.Update;
+using AutoAd.Persistence.Features.Queries.Brands.GetBrandById;
+using AutoAd.Persistence.Features.Queries.Brands.GetBrands;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoAd.API.Controllers
 {
     [Route("api/brand")]
-    [ApiController]
     [Authorize(Roles = "ADMIN")]
+    [ApiController]
     public class BrandAPIController : ControllerBase
     {
-        private readonly IBrandReadRepository _brandReadRepository;
-        private readonly IBrandWriteRepository _brandWriteRepository;
-        private readonly IMapper _mapper;
-        private ResponseDto _response;
+        private readonly IMediator _mediator;
 
-        public BrandAPIController(IBrandReadRepository brandReadRepository, IBrandWriteRepository brandWriteRepository, IMapper mapper)
+        public BrandAPIController(IMediator mediator)
         {
-            _brandReadRepository = brandReadRepository;
-            _brandWriteRepository = brandWriteRepository;
-            _response = new ResponseDto();
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<IActionResult> Get([FromQuery]GetBrandsQueryRequest getBrandsQueryRequest)
         {
-            try
-            {
-                IEnumerable<Brand> objList = _brandReadRepository.GetAll(false);
-
-                _response.Result = _mapper.Map<IEnumerable<BrandDto>>(objList);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetBrandsQueryResponse response = await _mediator.Send(getBrandsQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ResponseDto> Get(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] GetBrandByIdQueryRequest getBrandByIdQueryRequest)
         {
-            try
-            {
-                Brand obj = await _brandReadRepository.GetByIdAsync(id);
-                _response.Result = _mapper.Map<BrandDto>(obj);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            GetBrandByIdQueryResponse response = await _mediator.Send(getBrandByIdQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ResponseDto> Create([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> Create(CreateBrandCommandRequest createBrandCommandRequest)
         {
-            try
-            {
-                Brand brand = _mapper.Map<Brand>(brandDto);
-                await _brandWriteRepository.AddAsync(brand);
-                await _brandWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<BrandDto>(brand);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            CreateBrandCommandResponse response = await _mediator.Send(createBrandCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<ResponseDto> Edit([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> Edit([FromBody] UpdateBrandCommandRequest updateBrandCommandRequest)
         {
-            try
-            {
-                Brand brand = _mapper.Map<Brand>(brandDto);
-                _brandWriteRepository.Update(brand);
-                await _brandWriteRepository.SaveAsync();
-
-                _response.Result = _mapper.Map<BrandDto>(brand);
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            UpdateBrandCommandResponse response = await _mediator.Send(updateBrandCommandRequest);
+            return Ok(response);
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<ResponseDto> Delete(int id)
+        [Route("{Id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteBrandCommandRequest deleteBrandCommandRequest)
         {
-            try
-            {
-                await _brandWriteRepository.RemoveAsync(id);
-                await _brandWriteRepository.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _response.isSuccess = false;
-                _response.Message = ex.Message;
-            }
-            return _response;
+            DeleteBrandCommandResponse response = await _mediator.Send(deleteBrandCommandRequest);
+            return Ok(response);
         }
     }
 }

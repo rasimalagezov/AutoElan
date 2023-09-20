@@ -8,6 +8,7 @@ namespace AutoAd.Web
     {
         public static void AddWebApplicationServices(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
             services.AddScoped<ITokenProvider, TokenProvider>();
 
             services.AddScoped<IBaseService, BaseService>();
